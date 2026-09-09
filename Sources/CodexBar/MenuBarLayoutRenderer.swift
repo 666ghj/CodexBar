@@ -139,7 +139,7 @@ struct MenuBarLayoutRenderKey: Hashable {
     let isDebugApp: Bool
     let isStale: Bool
     let verticalAdjustment: Int
-    let resetText: MenuBarLayoutResetText
+    let resetText: [MenuBarLayoutResetText]
     /// Truth value per conditional id. Predicates can read the clock (time to reset), so two renders
     /// with identical data and reset text can still need different branches; keying on the outcomes
     /// keeps the cache correct without putting `now` — which ticks constantly — into the key.
@@ -251,7 +251,10 @@ final class MenuBarLayoutRenderer {
         options: MenuBarLayoutRenderOptions)
         -> MenuBarLayoutRenderedTitle
     {
-        let resetText = MenuBarLayoutResetText(window: data.automatic, now: options.now)
+        let resetWindows = Set(layout.flattenedTokens(conditionals: options.conditionals).compactMap(\.resetWindow))
+        let resetText = PercentWindow.allCases
+            .filter { $0 == .automatic || resetWindows.contains($0) }
+            .map { MenuBarLayoutResetText(window: Self.window($0, data: data), now: options.now) }
         // Evaluate each conditional exactly once per render: the outcome is both a cache-key component
         // and what the token resolver needs, so re-testing per placement would only duplicate work.
         let outcomes = Dictionary(
@@ -587,6 +590,15 @@ final class MenuBarLayoutRenderer {
                     ?? data.automatic?.resetDescription,
                 unavailableLabel: L("Reset time unavailable"),
                 attributes: style.attributes)
+        case let .windowResetCountdown(window), let .windowResetAbsolute(window):
+            let text = MenuBarLayoutResetText(window: Self.window(window, data: data), now: options.now)
+            let label = item.editorLabel(provider: data.provider)
+            let value = item.resetIsAbsolute ? text.absolute : text.countdown
+            return self.optionalTextToken(
+                value,
+                unavailableLabel: L("%@ unavailable", label),
+                accessibilityText: value.map { L("%@: %@", Self.windowAccessibilityLabel(window, data: data), $0) },
+                attributes: style.attributes)
         case .runsOut, .runsOutCompact:
             let isCompact = item == .runsOutCompact
             return self.optionalTextToken(
@@ -640,27 +652,32 @@ final class MenuBarLayoutRenderer {
             automaticText: data.automaticText,
             showUsed: options.showUsed)
         let prefix: String
-        let accessibilityPrefix: String
+        let accessibilityPrefix = Self.windowAccessibilityLabel(window, data: data)
         switch window {
         case .session:
             prefix = Self.sessionPrefix(rateWindow)
-            accessibilityPrefix = L("Session")
         case .weekly:
             let secondaryLabel = Self.secondaryLabel(data: data)
             prefix = secondaryLabel.flatMap(\.first).map { String($0).uppercased() } ?? "W"
-            accessibilityPrefix = secondaryLabel ?? L("Weekly")
         case .scopedWeekly:
             prefix = data.scopedWeeklyTitle.map { String($0.prefix(1)).uppercased() } ?? "F"
-            accessibilityPrefix = data.scopedWeeklyTitle ?? L("Scoped weekly")
         case .automatic:
             prefix = ""
-            accessibilityPrefix = L("Usage")
         }
         let display = prefix.isEmpty ? resolvedValue.text : "\(prefix) \(resolvedValue.text)"
         let accessibility = resolvedValue.isAvailable
             ? L("%@ %@", accessibilityPrefix, resolvedValue.text)
             : L("%@ unavailable", accessibilityPrefix)
         return self.textToken(display, accessibilityText: accessibility, attributes: style.attributes)
+    }
+
+    private static func windowAccessibilityLabel(_ window: PercentWindow, data: MenuBarLayoutRenderData) -> String {
+        switch window {
+        case .session: L("Session")
+        case .weekly: self.secondaryLabel(data: data) ?? L("Weekly")
+        case .scopedWeekly: data.scopedWeeklyTitle ?? L("Scoped weekly")
+        case .automatic: L("Usage")
+        }
     }
 
     private static func iconAccessibilityText(data: MenuBarLayoutRenderData) -> String {
