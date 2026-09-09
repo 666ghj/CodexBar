@@ -138,3 +138,7 @@ Cost-history submenus keep tall histories in a scrollable viewport. Switching To
 ### Provider percent window
 
 In Icon and Percent mode, provider settings expose an Auto, Session, or Weekly picker when the provider supports multiple quota windows. The choice updates top-level percent tokens in that provider’s layout. Conditional tokens and other providers’ layouts remain independent; use the layout editor for mixed percent windows.
+
+### Inline cost chart inspection
+
+Hover over a daily bar in a provider menu’s cost chart to inspect its date, cost, and token count. The highlighted day follows the pointer and clears when it leaves the chart; missing or unpriced values remain unavailable. This does not change cost collection or Settings charts.

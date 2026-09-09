@@ -5,6 +5,7 @@
 ### Added
 - Menu bar: choose Auto, Session, or Weekly percent windows in provider settings while preserving custom layout tokens and the global icon style (#3124). Thanks @J2TeamNNL!
 - Menu bar layouts: choose session or weekly reset countdowns and clocks, including conditional branches; preserve older layouts, schedule visible countdown changes, and avoid repeated VoiceOver wording (#3481, #3356). Thanks @vincent-peng!
+- Inline cost charts: inspect each day’s localized date, cost, and token count by hovering over its bar, with a stable chart layout and unavailable values kept distinct (#3413). Thanks @666ghj!
 
 ### Fixed
 - Codex local costs: exclude inherited records before an explicit subagent history boundary, including files with no child-owned usage yet, and refresh older cached counts without discarding stored history (related to #3524). Thanks @vnnkl!
