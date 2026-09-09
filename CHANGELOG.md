@@ -4,6 +4,7 @@
 
 ### Fixed
 - Token counts: promote rounded `1000K` and `1000M` values to `1M` and `1B`, preserve ordinary precision, and handle the full signed integer range without crashing (#3519, fixes #3518). Thanks @harjothkhara!
+- Development: fail before Swift test discovery when Python lacks process-containment APIs, name the interpreter and missing capabilities, and document how to select a compatible Python (#3517, fixes #3515). Thanks @devYRPauli!
 
 ## 0.57.0 — 2026-09-08
 
