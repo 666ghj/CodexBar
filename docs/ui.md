@@ -134,3 +134,7 @@ Runs out tokens remain hidden until 3% of their window has elapsed.
 See also: `docs/widgets.md`.
 
 Cost-history submenus keep tall histories in a scrollable viewport. Switching Token/Cost preserves the viewport; scrolling over the chart moves through the history without moving the native menu.
+
+### Provider percent window
+
+In Icon and Percent mode, provider settings expose an Auto, Session, or Weekly picker when the provider supports multiple quota windows. The choice updates top-level percent tokens in that provider’s layout. Conditional tokens and other providers’ layouts remain independent; use the layout editor for mixed percent windows.

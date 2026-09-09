@@ -3,6 +3,7 @@
 ## 0.57.1 — Unreleased
 
 ### Added
+- Menu bar: choose Auto, Session, or Weekly percent windows in provider settings while preserving custom layout tokens and the global icon style (#3124). Thanks @J2TeamNNL!
 - Menu bar layouts: choose session or weekly reset countdowns and clocks, including conditional branches; preserve older layouts, schedule visible countdown changes, and avoid repeated VoiceOver wording (#3481, #3356). Thanks @vincent-peng!
 
 ### Fixed
